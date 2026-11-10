@@ -4,13 +4,13 @@
 # out/run.txt as well as the terminal.
 #
 #   bash scripts/run-msys2.sh [GAME_DIR] [extra loader arguments...]
-#   GAME_DIR: the game folder with eboot.bin (default: $BB_GAME_DIR, else ./nhl19)
+#   GAME_DIR: the game folder with eboot.bin (default: $BB_GAME_DIR, else ./nhl21)
 #   BB_SKIP_PREPARE=1   run again without preparing (after the first run)
 # Any BB_* variable set before it reaches the game (BB_LOG_UNRESOLVED=1, BB_NEO=1, ...).
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
 [[ ${MSYSTEM:-} == CLANG64 ]] || { echo "run-msys2: run this in the MSYS2 CLANG64 shell" >&2; exit 1; }
-game=${BB_GAME_DIR:-nhl19}
+game=${BB_GAME_DIR:-nhl21}
 if [[ $# -gt 0 && -d $1 ]]; then game=$1; shift; fi
 [[ -f $game/eboot.bin ]] || { echo "run-msys2: no eboot.bin in '$game' (pass the game folder, or set BB_GAME_DIR)" >&2; exit 1; }
 exe=out/windows/bin/sacredfire-game.exe
@@ -50,7 +50,7 @@ export BB_NEO=${BB_NEO:-0}
 # that was never made (guest fault at 0x3846425, a null global); with the network mode on
 # (BB_ONLINE_SERVER: simulated PSN sign-in, only *.ea.com names resolve, to 127.0.0.1) start-up
 # continues. Nothing listens there, so the game finds no EA servers. BB_ONLINE_SERVER= (empty) turns it off.
-if [[ $profile == nhl19 && -z ${BB_ONLINE_SERVER+set} ]]; then
+if [[ ( $profile == nhl19 || $profile == nhl21 ) && -z ${BB_ONLINE_SERVER+set} ]]; then
     export BB_ONLINE_SERVER=127.0.0.1
     echo "run-msys2: NHL 19: network mode on (BB_ONLINE_SERVER=127.0.0.1)"
 fi
@@ -58,15 +58,15 @@ fi
 # images (shadPS4 issue #4375 for UFC 4, same engine); the rest as run.sh's ufc3 defaults: twins
 # off (they deadlock against precise readbacks), write windows + pre-upload + single-stepped
 # writes, Z16+S8 depth kept as D16. Each can still be overridden from the command line.
-if [[ $profile == nhl19 || $profile == ufc3 ]]; then
-    if [[ $profile == nhl19 ]]; then
+if [[ $profile == nhl19 || $profile == nhl21 || $profile == ufc3 ]]; then
+    if [[ $profile == nhl19 || $profile == nhl21 ]]; then
         # NHL 19: precise readbacks (2). With the red-zone fix (runtime_fp.c) they no longer shake the
         # jerseys (their read faults used to overwrite the game's red zone), and the bearded players'
         # faces need them (with 1 a beard streak runs down to the skates in team select).
         export BB_READBACKS=${BB_READBACKS:-2}
     fi
     export BB_READBACKS=${BB_READBACKS:-2} BB_READBACK_LINEAR=${BB_READBACK_LINEAR:-1} BB_GPU_WRITE_TWINS=${BB_GPU_WRITE_TWINS:-0}
-    if [[ $profile == nhl19 ]]; then
+    if [[ $profile == nhl19 || $profile == nhl21 ]]; then
         # NHL 19: write windows/stepped writes send the players' cloth vertices to the GPU while the
         # game is still writing them (jerseys shake), so they are off. The background pre-upload stays
         # on: without it the main menu's mode tiles are missing. Black models without the linear
@@ -78,10 +78,10 @@ if [[ $profile == nhl19 || $profile == ufc3 ]]; then
     export BB_Z16S8_AS_D16=${BB_Z16S8_AS_D16:-1}
     echo "run-msys2: Ignite graphics defaults: readbacks $BB_READBACKS, linear $BB_READBACK_LINEAR, pre-upload $BB_PREUPLOAD, write windows $BB_WRITE_WINDOW"
 fi
-# NHL 19: the game asks for flip rate 1 (30 FPS) for its intro videos, team select and matches, and
+# NHL 19 and NHL 21 (set up like NHL 19 until it shows otherwise): the game asks for flip rate 1 (30 FPS) for its intro videos, team select and matches, and
 # 0 (60 FPS) in the menus. BB_FLIP_RATE=0 keeps it at 60 throughout; BB_FLIP_RATE=-1 lets the game
 # choose again (the console's behaviour).
-if [[ $profile == nhl19 ]]; then
+if [[ $profile == nhl19 || $profile == nhl21 ]]; then
     export BB_FLIP_RATE=${BB_FLIP_RATE:-0}
     if [[ $BB_FLIP_RATE == 0 ]]; then echo "run-msys2: NHL 19: 60 FPS throughout (BB_FLIP_RATE=0; -1 lets the game choose)"
     else echo "run-msys2: NHL 19: flip rate $BB_FLIP_RATE"; fi

@@ -28,6 +28,11 @@ SUPPORTED = {
     '3ff8bd90d63536e6757d8a559a8770cf930ebb1aa2c851ed99d7ff4da763b620': dict(
         name='nhl19', title='CUSA11126', version='01.60', game='NHL 19', update='CUSA11126-patch',
         modules=('libc.prx', 'libSceFios2.prx'), patches=False),
+    # NHL 21 CUSA18182 (EU, EP0006) 1.10, SDK 7.50: the last NHL on Ignite (NHL 22 moved to
+    # Frostbite); set up like NHL 19.
+    '034dcb0272413fe0f90ed5547fb954e49895c8df65196f2e5743419bef105741': dict(
+        name='nhl21', title='CUSA18182', version='01.10', game='NHL 21', update='CUSA18182-patch',
+        modules=('libc.prx', 'libSceFios2.prx'), patches=False),
 }
 BY_TITLE = {p['title']: p for p in SUPPORTED.values()}
 # Images that are known NOT to be 1.14: the base game's executable (1.00). With a 1.14 param.sfo

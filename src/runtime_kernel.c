@@ -398,6 +398,19 @@ static ABI int32_t guest_sigreturn(void) { return 0; }
 /* POSIX sockets: no network (EHOSTUNREACH as -1 with errno set by the guest's errno slot). */
 static ABI int32_t posix_no_socket(void) { return -1; }
 
+/* getargc / getargv (libkernel): the process arguments, as a PS4 starts a game: the executable alone. */
+static char kernel_arg0[]="eboot.bin";
+static char *kernel_argv[]={kernel_arg0,NULL};
+static ABI int32_t kernel_getargc(void) { return 1; }
+static ABI char **kernel_getargv(void) { return kernel_argv; }
+
+/* sceKernelSleep (seconds) and sceKernelIsProspero (0: this is a PS4). */
+static ABI int32_t kernel_sleep_seconds(uint32_t seconds) { sleep_ns((uint64_t)seconds*1000000000u); return 0; }
+static ABI int32_t kernel_is_prospero(void) { return 0; }
+
+/* pthread_equal (thread handles are compared as they are). */
+static ABI int32_t posix_thread_equal(const void *a, const void *b) { return a==b; }
+
 static const RuntimeExport exports[]={
     {"sceKernelIsNeoMode",is_neo_mode}, {"sceKernelGetCpumode",get_cpumode}, {"sceKernelGetCurrentCpu",get_current_cpu},
     {"sceRandomGetRandomNumber",random_number},
@@ -439,6 +452,9 @@ static const RuntimeExport exports[]={
     {"pthread_key_create",posix_key_create}, {"pthread_key_delete",posix_key_delete},
     {"pthread_setspecific",posix_key_set}, {"pthread_getspecific",key_get},
     {"sceKernelLoadStartModule",load_start_module}, {"sceKernelStopUnloadModule",stop_unload_module},
+    {"getargc",kernel_getargc}, {"getargv",kernel_getargv},
+    {"sceKernelSleep",kernel_sleep_seconds}, {"sceKernelIsProspero",kernel_is_prospero},
+    {"pthread_equal",posix_thread_equal},
     {"msync",guest_msync}, {"sceKernelGetPageTableStats",page_table_stats}, {"sigreturn",guest_sigreturn},
     {"socket",posix_no_socket}, {"sendto",posix_no_socket}, {"recvfrom",posix_no_socket}, {"setsockopt",posix_no_socket},
 };
