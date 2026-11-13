@@ -41,6 +41,7 @@ warning. Everything else is still to be checked.
 | Online play | Not available (see [Online](#online)) |
 | Launcher (`NHL21.exe`) | Working |
 | Intel CPUs | Working: the game's AMD-only SSE4a instructions are emulated |
+| Linux | Test builds only, not tested by the developer (see [Linux](#linux-test-builds)) |
 
 ## Features
 
@@ -108,6 +109,22 @@ beside the program instead.
 
 Unzip the new release over the old one, or into a new folder. Your settings and saves stay in
 `%LOCALAPPDATA%\NHL21Native`.
+
+## Linux (test builds)
+
+The code this port grew from also runs on Linux, and NHL 21 test builds for Linux are made by
+GitHub (`.github/workflows/linux.yml`) as an AppImage and a tar.gz, the same way as the NHL 19
+port's. The developer has no Linux PC, so **these builds have only been compiled, not run**: they're
+published as pre-releases, and reports from anyone who tries them are very welcome. See
+[`packaging/linux/README-Linux.md`](packaging/linux/README-Linux.md) for how to start them.
+
+- Same game fixes and settings as the Windows version, and the AMD-only instruction emulation for
+  Intel CPUs. Red-zone protection isn't needed: Linux leaves the stack's red zone alone.
+- No launcher window yet: the game folder is chosen once, and settings are in
+  `~/.local/share/NHL21Native/nhl21.conf`.
+- A test build is made by pushing a tag like `v0.1.0-linux-test1`: the workflow builds it and
+  publishes a pre-release with `docs/release-notes/linux-test.md` as its notes. The workflow can
+  also be run by hand (Actions > linux > Run workflow) to get the files without a release.
 
 ## Online
 

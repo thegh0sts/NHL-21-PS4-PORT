@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=NHL 21 Native
+Comment=Play NHL 21 with your own PS4 game dump
+Exec=AppRun
+Icon=NHL21Native
+Terminal=false
+Categories=Game;SportsGame;
