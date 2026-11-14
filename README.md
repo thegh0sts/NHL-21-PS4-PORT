@@ -236,6 +236,12 @@ from the game and can't be shared. Saves are fine to share: they hold only your 
 
 ## Version history
 
+### v0.1.1 (2026-11-14)
+
+- Fixed a crash while loading: when the game's watchdog (HangMonitor) noticed a slow thread, it
+  read that thread's stack at the wrong address, because the port didn't report where thread
+  stacks are. The real addresses are now reported
+
 ### v0.1.0 (2026-11-11)
 
 First test release of the NHL 21 port.
